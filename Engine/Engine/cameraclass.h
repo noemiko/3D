@@ -3,7 +3,6 @@
 
 #include <d3dx10math.h>
 
-//obiekt do ustalania pozycji kamery
 class CameraClass
 {
 public:

@@ -7,7 +7,10 @@ GraphicsClass::GraphicsClass()
 	m_Camera = 0;
 	m_Model = 0;
 	m_LightShader = 0;
-	m_Light = 0;
+	m_Light1 = 0;
+	m_Light2 = 0;
+	m_Light3 = 0;
+	m_Light4 = 0;
 }
 
 
@@ -28,14 +31,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Stworzenie obiektu Direct3D.
 	m_D3D = new D3DClass;
-	if(!m_D3D)
+	if (!m_D3D)
 	{
 		return false;
 	}
 
-	// Initializacja obiektu Direct3D, ifnormacjami o wysokoœci, szerokoœci.
+	// Initializacja obiektu Direct3D, inormacjami o wysokoœci, szerokoœci, czy na pe³en ekran itd.
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if(!result)
+	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
 		return false;
@@ -43,7 +46,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	//Stworzenie obiektu kamery.
 	m_Camera = new CameraClass;
-	if(!m_Camera)
+	if (!m_Camera)
 	{
 		return false;
 	}
@@ -59,21 +62,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initializuj model.
-	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/stone01.png", L"../Engine/data/dirt01.dds");
+	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/box.png", L"../Engine/data/grass.png");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Stwórz obiek light shader.
+	// Create the light shader object.
 	m_LightShader = new LightShaderClass;
 	if(!m_LightShader)
 	{
 		return false;
 	}
 
-	// Initializuj obiekt light shader.
+	// Stwórz obiek light shader.
 	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if(!result)
 	{
@@ -81,16 +84,50 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	//Stwórz light obiekt.
-	m_Light = new LightClass;
-	if(!m_Light)
+	// Initializuj obiekt light shader.
+	//Stwórz obiekt pierwszego œwiat³a.
+	m_Light1 = new LightClass;
+	if (!m_Light1)
 	{
 		return false;
 	}
 
-	// Initializuj light obiekt.
-	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	// Initializuje obiekt pierwszego œwiat³a
+	m_Light1->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	m_Light1->SetPosition(-10.0f, 10.0f, -5.0f);
+
+	//Stwórz obiekt drugiego œwiat³a.
+	m_Light2 = new LightClass;
+	if (!m_Light2)
+	{
+		return false;
+	}
+
+	// Initializuje obiekt drugiego œwiat³a
+	m_Light2->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
+	m_Light2->SetPosition(10.0f, 10.0f, -5.0f);
+
+	//Stwórz obiekt trzeciego œwiat³a.
+	m_Light3 = new LightClass;
+	if (!m_Light3)
+	{
+		return false;
+	}
+
+	// Initializuje obiekt trzeciego œwiat³a
+	m_Light3->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	m_Light3->SetPosition(-10.0f, -10.0f, -5.0f);
+
+	//Stwórz obiekt czwartego œwiat³a.
+	m_Light4 = new LightClass;
+	if (!m_Light4)
+	{
+		return false;
+	}
+
+	// Initializuje obiekt czwartego œwiat³a
+	m_Light4->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light4->SetPosition(10.0f, -10.0f, -5.0f);
 
 	return true;
 }
@@ -98,11 +135,29 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	//Zwalnianie pamiêci.
-	if(m_Light)
+	// Uwolnienie pamiêci obiektów œwiat³a.
+	if (m_Light1)
 	{
-		delete m_Light;
-		m_Light = 0;
+		delete m_Light1;
+		m_Light1 = 0;
+	}
+
+	if (m_Light2)
+	{
+		delete m_Light2;
+		m_Light2 = 0;
+	}
+
+	if (m_Light3)
+	{
+		delete m_Light3;
+		m_Light3 = 0;
+	}
+
+	if (m_Light4)
+	{
+		delete m_Light4;
+		m_Light4 = 0;
 	}
 
 	if(m_LightShader)
@@ -139,18 +194,19 @@ void GraphicsClass::Shutdown()
 bool GraphicsClass::Frame()
 {
 	bool result;
-	static float rotation = 0.0f;
+	static float rotation = 0.1f;
 
 
-	// Aktualizacji zmiennych po ka¿dej klatce.
-	rotation += (float)D3DX_PI * 0.08f;
+	// Aktualizacji zmiennych po ka¿dej klatce
+	rotation += (float)D3DX_PI * 0.003f;
 	if(rotation > 360.0f)
 	{
 		rotation -= 360.0f;
 	}
 	
-	// Renderuj grafikê sceny.
+	// Renderuj grafikê sceny
 	result = Render(rotation);
+
 	if(!result)
 	{
 		return false;
@@ -159,33 +215,48 @@ bool GraphicsClass::Frame()
 	return true;
 }
 
-
 bool GraphicsClass::Render(float rotation)
 {
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	D3DXVECTOR4 diffuseColor[4];
+	D3DXVECTOR4 lightPosition[4];
 	bool result;
 
+	// Utwórz tablicê kolorów rozproszonych z czterech œwiate³ kolorów.
+	diffuseColor[0] = m_Light1->GetDiffuseColor();
+	diffuseColor[1] = m_Light2->GetDiffuseColor();
+	diffuseColor[2] = m_Light3->GetDiffuseColor();
+	diffuseColor[3] = m_Light4->GetDiffuseColor();
 
-	// Czyœc bufer do pocz¹tkowej sceny.
+	// Utwórz tablicê pozycji œwiat³a z czterech pozycji œwiat³a.
+	lightPosition[0] = m_Light1->GetPosition();
+	lightPosition[1] = m_Light2->GetPosition();
+	lightPosition[2] = m_Light3->GetPosition();
+	lightPosition[3] = m_Light4->GetPosition();
+
+	// Czyœc bufer dla pocz¹tkowej sceny.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Stwó tablicê widoku bazuj¹æ na pozycji kamery
+	// Stwórz tablicê widoku bazuj¹æ na pozycji kamery
 	m_Camera->Render();
 
+	// Obracaj macierz œwiata.
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+
 	// Pobierz œwiat, widok i tablice projekcyjne z obiektów kamery i d3d.
-	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Obracaj macierz œwiata.
 	D3DXMatrixRotationY(&worldMatrix, rotation);
 
-	//Umieœæ modelowe vertexów i bufory indeksu , aby przygotowaæ je do rysowania.
+	//Umieœæ bufory vertexów i bufory indeksu , aby przygotowaæ je do rysowania.
 	m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Renderuj model u¿ywaj¹c light shader.
 	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-								   m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor());
+		m_Model->GetTextureArray(), diffuseColor, lightPosition);
 	if(!result)
 	{
 		return false;

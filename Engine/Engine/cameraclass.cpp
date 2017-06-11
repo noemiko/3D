@@ -75,7 +75,7 @@ void CameraClass::Render()
 	lookAt.y = 0.0f;
 	lookAt.z = 1.0f;
 
-	// Ustaw odchylenie (oœ Y), skok (oœ X) i obroty (oœ Z) w radianach.
+	// Ustaw odchylenie (oœ Y), skok (oœ X) i obroty (oœ Z) w radianach.	
 	pitch = m_rotationX * 0.0174532925f;
 	yaw   = m_rotationY * 0.0174532925f;
 	roll  = m_rotationZ * 0.0174532925f;

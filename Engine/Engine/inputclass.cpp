@@ -22,7 +22,7 @@ void InputClass::Initialize()
 	
 
 	// Initializacja wszystkich klawiszy jako nie wciœniete
-	for(i=0; i<256; i++)
+	for(i = 0; i<256; i++)
 	{
 		m_keys[i] = false;
 	}
@@ -41,7 +41,7 @@ void InputClass::KeyDown(unsigned int input)
 
 void InputClass::KeyUp(unsigned int input)
 {
-	// Po puszczeniu klawisza znów nie jest on wciœniêty.
+	// Po puszczeniu klawisza zmiana jego stanu.
 	m_keys[input] = false;
 	return;
 }

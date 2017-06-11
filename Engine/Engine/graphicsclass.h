@@ -1,6 +1,11 @@
 #ifndef _GRAPHICSCLASS_H_
 #define _GRAPHICSCLASS_H_
 
+const bool FULL_SCREEN = false;
+const bool VSYNC_ENABLED = true;
+const float SCREEN_DEPTH = 1000.0f;
+const float SCREEN_NEAR = 0.1f;
+
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
@@ -8,10 +13,6 @@
 #include "lightclass.h"
 
 
-const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = true;
-const float SCREEN_DEPTH = 1000.0f;
-const float SCREEN_NEAR = 0.1f;
 
 class GraphicsClass
 {
@@ -32,7 +33,7 @@ private:
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	LightShaderClass* m_LightShader;
-	LightClass* m_Light;
+	LightClass *m_Light1, *m_Light2, *m_Light3, *m_Light4;
 };
 
 #endif

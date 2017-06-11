@@ -27,21 +27,21 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* te
 
 	// Za³adowanie danych dla modelu
 	result = LoadModel(modelFilename);
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
 
 	//Initializacja vertexa and bufora indexów.
 	result = InitializeBuffers(device);
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
 
 	// Za³adowanie tekstur dla tego modelu
 	result = LoadTexture(device, textureFilename1, textureFilename2);
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
@@ -91,27 +91,27 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	VertexType* vertices;
 	unsigned long* indices;
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-    D3D11_SUBRESOURCE_DATA vertexData, indexData;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 	int i;
 
 
 	// Stworzenie tablicy vertex.
 	vertices = new VertexType[m_vertexCount];
-	if(!vertices)
+	if (!vertices)
 	{
 		return false;
 	}
 
 	// Stworzenie tablicy indeksów.
 	indices = new unsigned long[m_indexCount];
-	if(!indices)
+	if (!indices)
 	{
 		return false;
 	}
 
 	// Za³aduj tablice vertexa i tablicê indeksów z danymi.
-	for(i=0; i<m_vertexCount; i++)
+	for (i = 0; i<m_vertexCount; i++)
 	{
 		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
 		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
@@ -121,50 +121,50 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	}
 
 	// Ustawiamy opis dla statycznego vertex buffera.
-    vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vertexBufferDesc.CPUAccessFlags = 0;
-    vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = sizeof(VertexType)* m_vertexCount;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
 	// Podaj strukturê do wskaŸnika wierzcho³ków.
-    vertexData.pSysMem = vertices;
+	vertexData.pSysMem = vertices;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
 	// Stworzenia bufora vertexów.
-    result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if(FAILED(result))
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	if (FAILED(result))
 	{
 		return false;
 	}
 
 	// Ustawiamy opis dla statycznego buffera indeksów.
-    indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
-    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    indexBufferDesc.CPUAccessFlags = 0;
-    indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long)* m_indexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
 	// Podaj strukturê do wskaŸnika dla index data.
-    indexData.pSysMem = indices;
+	indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
 	// Stwórz bufor indeksów.
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if(FAILED(result))
+	if (FAILED(result))
 	{
 		return false;
 	}
 
 	// Zwolnienie tablicy , gdy bufory wierzcho³kowe i indeksy zosta³y utworzone i za³adowane.
-	delete [] vertices;
+	delete[] vertices;
 	vertices = 0;
 
-	delete [] indices;
+	delete[] indices;
 	indices = 0;
 
 	return true;
@@ -174,14 +174,14 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 void ModelClass::ShutdownBuffers()
 {
 	//Zwolnienie pamiêci bufera indeksów.
-	if(m_indexBuffer)
+	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
 	}
 
 	// Zwolnienie pamieci bufora verteksów.
-	if(m_vertexBuffer)
+	if (m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
 		m_vertexBuffer = 0;
@@ -198,16 +198,16 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 
 
 	//Ustaw krok naprzód i przesuniêcie bufora.
-	stride = sizeof(VertexType); 
+	stride = sizeof(VertexType);
 	offset = 0;
-    
+
 	// Ustaw bufor vertexa jako aktywny w assemblerze wejœciowym, aby móg³ byæ renderowany
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
-    // Ustaw bufor indeksu jako aktywny w assemblerze wejœciowym, aby móg³ byæ renderowany
+	// Ustaw bufor indeksu jako aktywny w assemblerze wejœciowym, aby móg³ byæ renderowany
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-    // Ustaw typ, który powinien byæ renderowany z tego buforu vertexa, w tym przypadku trójk¹ty.
+	// Ustaw typ, który powinien byæ renderowany z tego buforu vertexa, w tym przypadku trójk¹ty.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
@@ -228,7 +228,7 @@ bool ModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename1, WCHAR* file
 
 	// Initialize the texture object.
 	result = m_TextureArray->Initialize(device, filename1, filename2);
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
@@ -258,18 +258,18 @@ bool ModelClass::LoadModel(char* filename)
 	int i;
 
 
-	// Open the model file.
+	// Otwórz plik z modele.
 	fin.open(filename);
-	
-	// If it could not open the file then exit.
-	if(fin.fail())
+
+	// Je¿eli nie mo¿na otworzyæ pliku.
+	if (fin.fail())
 	{
 		return false;
 	}
 
-	// Read up to the value of vertex count.
+	// Pobierz wartoœæ vertexów.
 	fin.get(input);
-	while(input != ':')
+	while (input != ':')
 	{
 		fin.get(input);
 	}
@@ -280,31 +280,31 @@ bool ModelClass::LoadModel(char* filename)
 	// Set the number of indices to be the same as the vertex count.
 	m_indexCount = m_vertexCount;
 
-	// Create the model using the vertex count that was read in.
+	// Stwórzy model u¿ywaj¹c liczby z pliku.
 	m_model = new ModelType[m_vertexCount];
-	if(!m_model)
+	if (!m_model)
 	{
 		return false;
 	}
 
-	// Read up to the beginning of the data.
+	// Pobierz informacjê z pocz¹tku pliku.
 	fin.get(input);
-	while(input != ':')
+	while (input != ':')
 	{
 		fin.get(input);
 	}
 	fin.get(input);
 	fin.get(input);
 
-	// Read in the vertex data.
-	for(i=0; i<m_vertexCount; i++)
+	// Czytaj dane vertexa.
+	for (i = 0; i<m_vertexCount; i++)
 	{
 		fin >> m_model[i].x >> m_model[i].y >> m_model[i].z;
 		fin >> m_model[i].tu >> m_model[i].tv;
 		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
 	}
 
-	// Close the model file.
+	// Zamknij plik.
 	fin.close();
 
 	return true;
@@ -313,9 +313,9 @@ bool ModelClass::LoadModel(char* filename)
 
 void ModelClass::ReleaseModel()
 {
-	if(m_model)
+	if (m_model)
 	{
-		delete [] m_model;
+		delete[] m_model;
 		m_model = 0;
 	}
 

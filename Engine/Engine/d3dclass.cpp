@@ -93,7 +93,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Teraz przejdŸ przez wszystkie tryby wyœwietlania i znajdŸ ten, który pasuje do szerokoœci i wysokoœci ekranu.
 	// Po znalezieniu dopasowania nale¿y przechowywaæ czêstotliwoœci odœwie¿ania dla tego monitora.
-	for(i=0; i<numModes; i++)
+	for (i = 0; i<numModes; i++)
 	{
 		if(displayModeList[i].Width == (unsigned int)screenWidth)
 		{
@@ -149,7 +149,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
     swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	// Ustaw czêstotliwoœæ odœwie¿ania buforu wstecznego.
-	if(m_vsync_enabled)
+	if (m_vsync_enabled)
 	{
 	    swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
@@ -163,9 +163,10 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	// Ustaw u¿ycie tylnego bufora.
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
+	// Set the handle for the window to render to.
     swapChainDesc.OutputWindow = hwnd;
 
-	// Ustaw multisampling na wy³¹czony.
+	//Ustaw multisampling na wy³¹czony.
     swapChainDesc.SampleDesc.Count = 1;
     swapChainDesc.SampleDesc.Quality = 0;
 
@@ -189,7 +190,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	// Nie ustawiaj zaawansowanych flag.
 	swapChainDesc.Flags = 0;
 
-	// Ustaw poziom funkcji na DirectX 11.
+	// Ustaw poziom funkcjonalnoœci na DirectX 11.
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Utwórz ³añcuch wymiany, urz¹dzenie Direct3D i kontekst urz¹dzenia Direct3D.
@@ -220,8 +221,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Zainicjuj opis buforu g³êbokoœci.
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-
-	// Ustaw opis bufora g³êbokoœci.
+	
+	// Utwórz teksturê buforu g³êbokoœci przy u¿yciu wype³nionego opisu.
 	depthBufferDesc.Width = screenWidth;
 	depthBufferDesc.Height = screenHeight;
 	depthBufferDesc.MipLevels = 1;
@@ -290,7 +291,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 		return false;
 	}
 
-	// Powi¹zaæ widok docelowy renderowania i bufor szablonu g³êbokoœci do  renderowania wyjœciowego
+	// Powi¹zanie widoku doceloegoy renderowania i buforu szablonu g³êbokoœci do  renderowania wyjœciowego
 	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
 	// Konfiguruj opis rastrowy, który okreœli, jak i jakie rysunki bêd¹ rysowane.
@@ -323,7 +324,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
     viewport.TopLeftX = 0.0f;
     viewport.TopLeftY = 0.0f;
 
-	// Stwórz viewport.
+	// Stworzenie viewportu.
     m_deviceContext->RSSetViewports(1, &viewport);
 
 	// Ustaw tablicê projekcji.
@@ -333,8 +334,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	// Utwórz macierz projekcji do renderowania 3D.
 	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fieldOfView, screenAspect, screenNear, screenDepth);
 
-    // Inicjalizuj macierz swiata na identity.
-    D3DXMatrixIdentity(&m_worldMatrix);
+	// Inicjalizuj macierz swiata na identity.
+	D3DXMatrixIdentity(&m_worldMatrix);
 
 	// Utwórz matrycê projekcyjn¹ ortograficzn¹ dla renderowania 2D.
 	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)screenWidth, (float)screenHeight, screenNear, screenDepth);
@@ -407,16 +408,16 @@ void D3DClass::BeginScene(float red, float green, float blue, float alpha)
 	float color[4];
 
 
-	// Ustawienie kolorów
+	// Ustawienie kolorów.
 	color[0] = red;
 	color[1] = green;
 	color[2] = blue;
 	color[3] = alpha;
 
-	// Czyœæ tylny bufor.
+	// Czyszczenie tylnego bufora.
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
     
-	// Czyœæ bufor g³êbokoœci
+	// Czyszczenie bufora g³ebokoœci.
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	return;
@@ -426,14 +427,14 @@ void D3DClass::BeginScene(float red, float green, float blue, float alpha)
 void D3DClass::EndScene()
 {
 	// Poka¿ tylny bufor na ektranie kiedy renderowanie siê skoñczy.
-	if(m_vsync_enabled)
+	if (m_vsync_enabled)
 	{
-		// Blokada odœwie¿ania ekranu.
+		// Przedstaw jak najszybciej.
 		m_swapChain->Present(1, 0);
 	}
 	else
 	{
-		// Przedstaw jak najszybciej.
+		// Present as fast as possible.
 		m_swapChain->Present(0, 0);
 	}
 

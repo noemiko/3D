@@ -5,11 +5,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 {
 	SystemClass* System;
 	bool result;
-	
-	
+
+
 	// Stworzenie obiektu, który uruchamia wszystkie potrzebne obiekty do otwarcia okna, renderowania.
 	System = new SystemClass;
-	if(!System)
+	if (!System)
 	{
 		return 0;
 	}
@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 
 
 
-	if(result)
+	if (result)
 	{
 		System->Run();
 	}

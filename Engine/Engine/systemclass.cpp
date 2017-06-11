@@ -33,7 +33,7 @@ bool SystemClass::Initialize()
 
 	// Stworzenie obiektu input, który zajmuje siê zczytywanie tego co wyklika u¿ytkownik
 	m_Input = new InputClass;
-	if(!m_Input)
+	if (!m_Input)
 	{
 		return false;
 	}
@@ -43,18 +43,18 @@ bool SystemClass::Initialize()
 
 	// Stworzenie obiektu grafiki, który zajmuje siê renderowaniem grafiki dla ca³ej aplikacji
 	m_Graphics = new GraphicsClass;
-	if(!m_Graphics)
+	if (!m_Graphics)
 	{
 		return false;
 	}
 
 	// Initializacaja obiektu grafiki - szerokoœci¹, wysokoœci¹ i obiektem input
 	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -62,7 +62,7 @@ bool SystemClass::Initialize()
 void SystemClass::Shutdown()
 {
 	// Zwolnienie pamiêci po obiekcie grafiki
-	if(m_Graphics)
+	if (m_Graphics)
 	{
 		m_Graphics->Shutdown();
 		delete m_Graphics;
@@ -70,7 +70,7 @@ void SystemClass::Shutdown()
 	}
 
 	// Zwolnienie pamiêci po obiekcie inputów
-	if(m_Input)
+	if (m_Input)
 	{
 		delete m_Input;
 		m_Input = 0;
@@ -78,7 +78,7 @@ void SystemClass::Shutdown()
 
 	// Zamkniêcie okna
 	ShutdownWindows();
-	
+
 	return;
 }
 
@@ -91,20 +91,20 @@ void SystemClass::Run()
 
 	// Initializacja struktury pamiêcie
 	ZeroMemory(&msg, sizeof(MSG));
-	
+
 	// Pêtla dopóki nie bêdzie wiadomoœci o przerwaniu
 	done = false;
-	while(!done)
+	while (!done)
 	{
 		// Sprawdzanie wiadomoœci od okna
-		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
 		// Je¿eli jest wiadomoœc o zakoñczeniu wtedy pêtla jest przerywana
-		if(msg.message == WM_QUIT)
+		if (msg.message == WM_QUIT)
 		{
 			done = true;
 		}
@@ -112,7 +112,7 @@ void SystemClass::Run()
 		{
 			// Kolejna klatka jest tworzona
 			result = Frame();
-			if(!result)
+			if (!result)
 			{
 				done = true;
 			}
@@ -130,14 +130,14 @@ bool SystemClass::Frame()
 
 
 	//Sprawdza czy u¿ytkownik wcisn¹³ esc, aby wyjœæ
-	if(m_Input->IsKeyDown(VK_ESCAPE))
+	if (m_Input->IsKeyDown(VK_ESCAPE))
 	{
 		return false;
 	}
 
 	// Przetwarzanie ramek dla graficznego obiektu
 	result = m_Graphics->Frame();
-	if(!result)
+	if (!result)
 	{
 		return false;
 	}
@@ -148,29 +148,29 @@ bool SystemClass::Frame()
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	switch(umsg)
+	switch (umsg)
 	{
 		// Sprawdzenie czy klawisz zostawi³ wciœniety
-		case WM_KEYDOWN:
-		{
-			// Przes³anie tej informacji do obiektu zajmuj¹cego siê inputami
-			m_Input->KeyDown((unsigned int)wparam);
-			return 0;
-		}
+	case WM_KEYDOWN:
+	{
+					   // Przes³anie tej informacji do obiektu zajmuj¹cego siê inputami
+					   m_Input->KeyDown((unsigned int)wparam);
+					   return 0;
+	}
 
 		// Sprawdzenie czy klawisz zosta³ zwolniony
-		case WM_KEYUP:
-		{
-			// Przeslanie tej informacji do obiektu input
-			m_Input->KeyUp((unsigned int)wparam);
-			return 0;
-		}
+	case WM_KEYUP:
+	{
+					 // Przeslanie tej informacji do obiektu input
+					 m_Input->KeyUp((unsigned int)wparam);
+					 return 0;
+	}
 
-		// Inne informacje o klaiwszach nic nie wywo³aj¹
-		default:
-		{
-			return DefWindowProc(hwnd, umsg, wparam, lparam);
-		}
+		// Inne informacje o klawiszach nic nie wywo³aj¹
+	default:
+	{
+			   return DefWindowProc(hwnd, umsg, wparam, lparam);
+	}
 	}
 }
 
@@ -182,75 +182,75 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	int posX, posY;
 
 
-	// Get an external pointer to this object.	
+	// Pobierz wskaŸnik
 	ApplicationHandle = this;
 
-	// Get the instance of this application.
+	// Pobierz instancjê aplikacji
 	m_hinstance = GetModuleHandle(NULL);
 
-	// Give the application a name.
-	m_applicationName = L"Engine";
+	// Nazwa aplikacji
+	m_applicationName = L"Projekt 3D";
 
-	// Setup the windows class with default settings.
-	wc.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wc.lpfnWndProc   = WndProc;
-	wc.cbClsExtra    = 0;
-	wc.cbWndExtra    = 0;
-	wc.hInstance     = m_hinstance;
-	wc.hIcon		 = LoadIcon(NULL, IDI_WINLOGO);
-	wc.hIconSm       = wc.hIcon;
-	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+	// Ustawl klasê okna z defaultowymi ustawieniami
+	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wc.lpfnWndProc = WndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = m_hinstance;
+	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
+	wc.hIconSm = wc.hIcon;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wc.lpszMenuName  = NULL;
+	wc.lpszMenuName = NULL;
 	wc.lpszClassName = m_applicationName;
-	wc.cbSize        = sizeof(WNDCLASSEX);
-	
-	// Register the window class.
+	wc.cbSize = sizeof(WNDCLASSEX);
+
+	// Rejestruj klasê okna.
 	RegisterClassEx(&wc);
 
-	// Determine the resolution of the clients desktop screen.
-	screenWidth  = GetSystemMetrics(SM_CXSCREEN);
+	// Okreœl rozdzielczoœæ ekranu pulpitu klienta.
+	screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-	// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
-	if(FULL_SCREEN)
+	// ustawienia wyswietalnia keranu w zale¿noœci od wybranych opcji
+	if (FULL_SCREEN)
 	{
-		// If full screen set the screen to maximum size of the users desktop and 32bit.
+		// ustaw maksymalny rozmiar okna
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-		dmScreenSettings.dmSize       = sizeof(dmScreenSettings);
-		dmScreenSettings.dmPelsWidth  = (unsigned long)screenWidth;
+		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
+		dmScreenSettings.dmPelsWidth = (unsigned long)screenWidth;
 		dmScreenSettings.dmPelsHeight = (unsigned long)screenHeight;
-		dmScreenSettings.dmBitsPerPel = 32;			
-		dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+		dmScreenSettings.dmBitsPerPel = 32;
+		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
-		// Change the display settings to full screen.
+		// Ustaw pe³en ekran
 		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
 
-		// Set the position of the window to the top left corner.
+		// Ustaw pozycjê okna na lewy górny róg 
 		posX = posY = 0;
 	}
 	else
 	{
-		// If windowed then set it to 800x600 resolution.
-		screenWidth  = 800;
+		// Ustawienie szerokoœci i wysokoœci
+		screenWidth = 800;
 		screenHeight = 600;
 
-		// Place the window in the middle of the screen.
-		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth)  / 2;
+		// Wyœrodkój okno na ekranie
+		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
 		posY = (GetSystemMetrics(SM_CYSCREEN) - screenHeight) / 2;
 	}
 
-	// Create the window with the screen settings and get the handle to it.
-	m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName, 
-						    WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
-						    posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
+	// Stwórz okno
+	m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,
+		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
+		posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
 
-	// Bring the window up on the screen and set it as main focus.
+	// Poka¿ okno na przedzie
 	ShowWindow(m_hwnd, SW_SHOW);
 	SetForegroundWindow(m_hwnd);
 	SetFocus(m_hwnd);
 
-	// Hide the mouse cursor.
+	// Schowaj kursor myszy
 	ShowCursor(false);
 
 	return;
@@ -259,24 +259,23 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 
 void SystemClass::ShutdownWindows()
 {
-	// Show the mouse cursor.
+	//Poka¿ kursor muszy
 	ShowCursor(true);
 
-	// Fix the display settings if leaving full screen mode.
-	if(FULL_SCREEN)
+	if (FULL_SCREEN)
 	{
 		ChangeDisplaySettings(NULL, 0);
 	}
 
-	// Remove the window.
+	// Usuñ okno
 	DestroyWindow(m_hwnd);
 	m_hwnd = NULL;
 
-	// Remove the application instance.
+	// usuñ instancje aplikacji
 	UnregisterClass(m_applicationName, m_hinstance);
 	m_hinstance = NULL;
 
-	// Release the pointer to this class.
+	// Zwolnienie pamiêci
 	ApplicationHandle = NULL;
 
 	return;
@@ -285,26 +284,26 @@ void SystemClass::ShutdownWindows()
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
-	switch(umessage)
+	switch (umessage)
 	{
-		// Check if the window is being destroyed.
-		case WM_DESTROY:
-		{
-			PostQuitMessage(0);
-			return 0;
-		}
+		// Sprawdzenie czy okno zosta³o zniszczone
+	case WM_DESTROY:
+	{
+					   PostQuitMessage(0);
+					   return 0;
+	}
 
-		// Check if the window is being closed.
-		case WM_CLOSE:
-		{
-			PostQuitMessage(0);		
-			return 0;
-		}
+		// Sprawdzenie czy okno zosta³o zamkniête
+	case WM_CLOSE:
+	{
+					 PostQuitMessage(0);
+					 return 0;
+	}
 
-		// All other messages pass to the message handler in the system class.
-		default:
-		{
-			return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
-		}
+		// Wszystkie inne wiadomoœci idê do message handlera
+	default:
+	{
+			   return ApplicationHandle->MessageHandler(hwnd, umessage, wparam, lparam);
+	}
 	}
 }

@@ -23,12 +23,11 @@ void LightClass::SetDiffuseColor(float red, float green, float blue, float alpha
 }
 
 
-void LightClass::SetDirection(float x, float y, float z)
+void LightClass::SetPosition(float x, float y, float z)
 {
-	m_direction = D3DXVECTOR3(x, y, z);
+	m_position = D3DXVECTOR4(x, y, z, 1.0f);
 	return;
 }
-
 
 D3DXVECTOR4 LightClass::GetDiffuseColor()
 {
@@ -36,7 +35,7 @@ D3DXVECTOR4 LightClass::GetDiffuseColor()
 }
 
 
-D3DXVECTOR3 LightClass::GetDirection()
+D3DXVECTOR4 LightClass::GetPosition()
 {
-	return m_direction;
+	return m_position;
 }

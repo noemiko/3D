@@ -6,7 +6,6 @@
 #include <fstream>
 using namespace std;
 
-
 #include "texturearrayclass.h"
 
 

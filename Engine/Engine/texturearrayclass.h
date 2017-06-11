@@ -1,9 +1,9 @@
 #ifndef _TEXTUREARRAYCLASS_H_
 #define _TEXTUREARRAYCLASS_H_
 
+
 #include <d3d11.h>
 #include <d3dx11tex.h>
-
 
 class TextureArrayClass
 {
@@ -18,7 +18,7 @@ public:
 	ID3D11ShaderResourceView** GetTextureArray();
 
 private:
-	//Dwu elementowa tablica tekstur.
+	//Tekstura sk³ada siê z dwóch grafik.
 
 		ID3D11ShaderResourceView* m_textures[2];
 };
