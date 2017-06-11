@@ -1,6 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: lightshaderclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "lightshaderclass.h"
 
 
@@ -30,7 +27,7 @@ bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 
-	// Initialize the vertex and pixel shaders.
+	// Initializacja vertexa and pixel shadera.
 	result = InitializeShader(device, hwnd, L"../Engine/light.vs", L"../Engine/light.ps");
 	if(!result)
 	{
@@ -43,7 +40,7 @@ bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 void LightShaderClass::Shutdown()
 {
-	// Shutdown the vertex and pixel shaders as well as the related objects.
+	// Wy³aczenie vertexa and pixel shadera i powi¹zanych obiektów.
 	ShutdownShader();
 
 	return;
@@ -56,14 +53,14 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	bool result;
 
 
-	// Set the shader parameters that it will use for rendering.
+	// Ustawienie parametrów shadera do renderowania.
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, diffuseColor);
 	if(!result)
 	{
 		return false;
 	}
 
-	// Now render the prepared buffers with the shader.
+	// Renderuj przygotowane bufery z shaderem.
 	RenderShader(deviceContext, indexCount);
 
 	return true;
@@ -83,22 +80,21 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	D3D11_BUFFER_DESC lightBufferDesc;
 
 
-	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
 	vertexShaderBuffer = 0;
 	pixelShaderBuffer = 0;
 
-    // Compile the vertex shader code.
+    // Kompiluj vertex shadera kod.
 	result = D3DX11CompileFromFile(vsFilename, NULL, NULL, "LightVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
 								   &vertexShaderBuffer, &errorMessage, NULL);
 	if(FAILED(result))
 	{
-		// If the shader failed to compile it should have writen something to the error message.
+		// Informacja w razie b³êdu.
 		if(errorMessage)
 		{
 			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
 		}
-		// If there was nothing in the error message then it simply could not find the shader file itself.
+		// Je¿eli jest b³¹d, ale brakuje wiadomoœci, to program nie potrafi³ znaleŸæ plik shadera
 		else
 		{
 			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
@@ -107,17 +103,17 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
-    // Compile the pixel shader code.
+    // Kompiluj kod pixel shadera.
 	result = D3DX11CompileFromFile(psFilename, NULL, NULL, "LightPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
 								   &pixelShaderBuffer, &errorMessage, NULL);
 	if(FAILED(result))
 	{
-		// If the shader failed to compile it should have writen something to the error message.
+		// Informacja w razie b³êdu.
 		if(errorMessage)
 		{
 			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
 		}
-		// If there was nothing in the error message then it simply could not find the file itself.
+		// Je¿eli jest b³¹d, ale brakuje wiadomoœci, to program nie potrafi³ znaleŸæ plik shadera
 		else
 		{
 			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
@@ -126,22 +122,21 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
-    // Create the vertex shader from the buffer.
+    // Stwórz vertex shader z bufera.
     result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-    // Create the pixel shader from the buffer.
+    // Stwórz pixel shader z bufera.
     result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Create the vertex input layout description.
-	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
+
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -166,10 +161,10 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[2].InstanceDataStepRate = 0;
 
-	// Get a count of the elements in the layout.
+	// Policz elemnety w layoucie.
     numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
-	// Create the vertex input layout.
+	// Stworz vertex input layout.
 	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), 
 		                               &m_layout);
 	if(FAILED(result))
@@ -177,14 +172,14 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
-	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
+	// Zwolnij pamiêæ vartex shadera i pixel shadera, bo nie s¹ wiêcej potrzebne
 	vertexShaderBuffer->Release();
 	vertexShaderBuffer = 0;
 
 	pixelShaderBuffer->Release();
 	pixelShaderBuffer = 0;
 
-	// Create a texture sampler state description.
+	// Utwórz opis stanu samplera tekstur.
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -199,14 +194,14 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	// Create the texture sampler state.
+	// Stwórz stan texture samplera.
     result = device->CreateSamplerState(&samplerDesc, &m_sampleState);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	// Konfiguruj opis sta³ego bufora dynamicznego, który znajduje siê w vertex shaderze
     matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
     matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -214,15 +209,14 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
     matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	// Utwórz ci¹g bufora, dziêki czemu mo¿emy uzyskaæ dostêp do sta³ego bufora vertexa z tej klasy.
 	result = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Setup the description of the light dynamic constant buffer that is in the pixel shader.
-	// Note that ByteWidth always needs to be a multiple of 16 if using D3D11_BIND_CONSTANT_BUFFER or CreateBuffer will fail.
+	// Konfiguruj opis dynamicznego buforu sta³ego œwiat³a, który znajduje siê w pixel shaderze.
 	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	lightBufferDesc.ByteWidth = sizeof(LightBufferType);
 	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -230,7 +224,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	lightBufferDesc.MiscFlags = 0;
 	lightBufferDesc.StructureByteStride = 0;
 
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	// Utwórz ci¹g bufora, dziêki czemu mo¿emy uzyskaæ dostêp do sta³ego bufora vertexa z tej klasy.
 	result = device->CreateBuffer(&lightBufferDesc, NULL, &m_lightBuffer);
 	if(FAILED(result))
 	{
@@ -243,42 +237,42 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 
 void LightShaderClass::ShutdownShader()
 {
-	// Release the light constant buffer.
+	// Zwolnij pamiêæ sta³ego bufera.
 	if(m_lightBuffer)
 	{
 		m_lightBuffer->Release();
 		m_lightBuffer = 0;
 	}
 
-	// Release the matrix constant buffer.
+	// Zwolnij pamiêæ sta³ego bufera.
 	if(m_matrixBuffer)
 	{
 		m_matrixBuffer->Release();
 		m_matrixBuffer = 0;
 	}
 
-	// Release the sampler state.
+	// Zwolnij pamiêæ stanu samplera.
 	if(m_sampleState)
 	{
 		m_sampleState->Release();
 		m_sampleState = 0;
 	}
 
-	// Release the layout.
+	// Zwolnij layout.
 	if(m_layout)
 	{
 		m_layout->Release();
 		m_layout = 0;
 	}
 
-	// Release the pixel shader.
+	// Zwolnij pixel shader.
 	if(m_pixelShader)
 	{
 		m_pixelShader->Release();
 		m_pixelShader = 0;
 	}
 
-	// Release the vertex shader.
+	// Zwolnij vertex shader.
 	if(m_vertexShader)
 	{
 		m_vertexShader->Release();
@@ -296,29 +290,29 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 	ofstream fout;
 
 
-	// Get a pointer to the error message text buffer.
+	// Pobierz wskaŸnik do wiadomoœci o b³êdzie.
 	compileErrors = (char*)(errorMessage->GetBufferPointer());
 
-	// Get the length of the message.
+	// Pobierz d³ugoœæ wiadomoœci.
 	bufferSize = errorMessage->GetBufferSize();
 
-	// Open a file to write the error message to.
+	// Otwórz plik.
 	fout.open("shader-error.txt");
 
-	// Write out the error message.
+	// Zapisz informacjê o b³êdzie.
 	for(i=0; i<bufferSize; i++)
 	{
 		fout << compileErrors[i];
 	}
 
-	// Close the file.
+	// Zamknij plik.
 	fout.close();
 
-	// Release the error message.
+	//Zwolnij pamiêæ.
 	errorMessage->Release();
 	errorMessage = 0;
 
-	// Pop a message up on the screen to notify the user to check the text file for compile errors.
+	// Poka¿ informacjê dla u¿ytkownika, gdzie ma szukaæ informacji o b³êdzie.
 	MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
 
 	return;
@@ -336,60 +330,59 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 	LightBufferType* dataPtr2;
 
 
-	// Transpose the matrices to prepare them for the shader.
+	// Transponuj tablice by przygotowaæ je na shadery.
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
 	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
 
-	// Lock the constant buffer so it can be written to.
+	// Zablokuj sta³y bufer by mo¿na do neigo coœ dodaæ.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Get a pointer to the data in the constant buffer.
+	// Pobierz wskaŸnik do danych w st¹³ym buforze.
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 
-	// Copy the matrices into the constant buffer.
+	// Przekopiowanie tablic do sta³êgo bufora.
 	dataPtr->world = worldMatrix;
 	dataPtr->view = viewMatrix;
 	dataPtr->projection = projectionMatrix;
 
-	// Unlock the constant buffer.
+	// Odblokowanie sta³ego bufora.
     deviceContext->Unmap(m_matrixBuffer, 0);
 
-	// Set the position of the constant buffer in the vertex shader.
+	//Ustaw pozycjê sta³ego bufora w vertex shaderze.
 	bufferNumber = 0;
 
-	// Now set the constant buffer in the vertex shader with the updated values.
+	// Ustaw sta³y bufer w vertex shaderze z nowymi wartoœciami.
     deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 
-	// Set shader texture resource in the pixel shader.
+	// Ustaw textury w pixel shaderze.
 	deviceContext->PSSetShaderResources(0, 2, textureArray);
 
-	// Lock the light constant buffer so it can be written to.
+	// Zablokuj sta³y bufor light by mo¿na by³o do niego coœ dodaæ.
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Get a pointer to the data in the constant buffer.
+	// Pobierz wskaŸnik do danych w sta³ym buforze.
 	dataPtr2 = (LightBufferType*)mappedResource.pData;
 
-	// Copy the lighting variables into the constant buffer.
+	// Skopiuj zmienne do sta³ego buforar.
 	dataPtr2->diffuseColor = diffuseColor;
 	dataPtr2->lightDirection = lightDirection;
 	dataPtr2->padding = 0.0f;
 
-	// Unlock the constant buffer.
+	// Odblokuj sta³y bufor.
 	deviceContext->Unmap(m_lightBuffer, 0);
 
-	// Set the position of the light constant buffer in the pixel shader.
 	bufferNumber = 0;
 
-	// Finally set the light constant buffer in the pixel shader with the updated values.
+	// Ustaw light buffer w pixel shaderze z nowymi wartoœciami.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
 
 	return true;
@@ -398,17 +391,16 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 
 void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
-	// Set the vertex input layout.
 	deviceContext->IASetInputLayout(m_layout);
 
-    // Set the vertex and pixel shaders that will be used to render this triangle.
+    // Ustaw vertex and pixel shader który bêdzie renderowaæ trójk¹t.
     deviceContext->VSSetShader(m_vertexShader, NULL, 0);
     deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 
-	// Set the sampler state in the pixel shader.
+	// Ustaw stan samplera w pixel shaderze.
 	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
-	// Render the triangle.
+	// Renderuj trójk¹t.
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;

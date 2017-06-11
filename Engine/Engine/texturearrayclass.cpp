@@ -1,8 +1,6 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: texturearrayclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "texturearrayclass.h"
-//The class constructor initializes the texture array elements to null.
+
+//Konstruktor initilizuje obiekty tablicy jako 0.
 
 TextureArrayClass::TextureArrayClass()
 {
@@ -24,14 +22,14 @@ bool TextureArrayClass::Initialize(ID3D11Device* device, WCHAR* filename1, WCHAR
 	HRESULT result;
 
 
-	// Load the first texture in.
+	// Za³aduj pierwsz¹ teksture.
 	result = D3DX11CreateShaderResourceViewFromFile(device, filename1, NULL, NULL, &m_textures[0], NULL);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Load the second texture in.
+	// Za³aduj drug¹ teksture.
 	result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
 	if (FAILED(result))
 	{
@@ -43,7 +41,7 @@ bool TextureArrayClass::Initialize(ID3D11Device* device, WCHAR* filename1, WCHAR
 
 void TextureArrayClass::Shutdown()
 {
-	// Release the texture resources.
+	// Zwolnij pamiê tekstur.
 	if (m_textures[0])
 	{
 		m_textures[0]->Release();

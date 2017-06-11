@@ -1,6 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: graphicsclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "graphicsclass.h"
 
 
@@ -29,14 +26,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	bool result;
 
 
-	// Create the Direct3D object.
+	// Stworzenie obiektu Direct3D.
 	m_D3D = new D3DClass;
 	if(!m_D3D)
 	{
 		return false;
 	}
 
-	// Initialize the Direct3D object.
+	// Initializacja obiektu Direct3D, ifnormacjami o wysokoœci, szerokoœci.
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if(!result)
 	{
@@ -44,24 +41,24 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the camera object.
+	//Stworzenie obiektu kamery.
 	m_Camera = new CameraClass;
 	if(!m_Camera)
 	{
 		return false;
 	}
 
-	// Set the initial position of the camera.
+	// Ustawienie pocz¹tkowej pozycji kamery.
 	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
 	
-	// Create the model object.
+	// Stworzenie obiektu.
 	m_Model = new ModelClass;
 	if(!m_Model)
 	{
 		return false;
 	}
 
-	// Initialize the model object.
+	// Initializuj model.
 	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/stone01.png", L"../Engine/data/dirt01.dds");
 	if(!result)
 	{
@@ -69,14 +66,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the light shader object.
+	// Stwórz obiek light shader.
 	m_LightShader = new LightShaderClass;
 	if(!m_LightShader)
 	{
 		return false;
 	}
 
-	// Initialize the light shader object.
+	// Initializuj obiekt light shader.
 	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if(!result)
 	{
@@ -84,14 +81,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the light object.
+	//Stwórz light obiekt.
 	m_Light = new LightClass;
 	if(!m_Light)
 	{
 		return false;
 	}
 
-	// Initialize the light object.
+	// Initializuj light obiekt.
 	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
 
@@ -101,14 +98,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the light object.
+	//Zwalnianie pamiêci.
 	if(m_Light)
 	{
 		delete m_Light;
 		m_Light = 0;
 	}
 
-	// Release the light shader object.
 	if(m_LightShader)
 	{
 		m_LightShader->Shutdown();
@@ -116,7 +112,6 @@ void GraphicsClass::Shutdown()
 		m_LightShader = 0;
 	}
 
-	// Release the model object.
 	if(m_Model)
 	{
 		m_Model->Shutdown();
@@ -124,14 +119,12 @@ void GraphicsClass::Shutdown()
 		m_Model = 0;
 	}
 
-	// Release the camera object.
 	if(m_Camera)
 	{
 		delete m_Camera;
 		m_Camera = 0;
 	}
 
-	// Release the D3D object.
 	if(m_D3D)
 	{
 		m_D3D->Shutdown();
@@ -149,14 +142,14 @@ bool GraphicsClass::Frame()
 	static float rotation = 0.0f;
 
 
-	// Update the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.01f;
+	// Aktualizacji zmiennych po ka¿dej klatce.
+	rotation += (float)D3DX_PI * 0.08f;
 	if(rotation > 360.0f)
 	{
 		rotation -= 360.0f;
 	}
 	
-	// Render the graphics scene.
+	// Renderuj grafikê sceny.
 	result = Render(rotation);
 	if(!result)
 	{
@@ -173,24 +166,24 @@ bool GraphicsClass::Render(float rotation)
 	bool result;
 
 
-	// Clear the buffers to begin the scene.
+	// Czyœc bufer do pocz¹tkowej sceny.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Generate the view matrix based on the camera's position.
+	// Stwó tablicê widoku bazuj¹æ na pozycji kamery
 	m_Camera->Render();
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+	// Pobierz œwiat, widok i tablice projekcyjne z obiektów kamery i d3d.
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Rotate the world matrix by the rotation value so that the triangle will spin.
+	// Obracaj macierz œwiata.
 	D3DXMatrixRotationY(&worldMatrix, rotation);
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	//Umieœæ modelowe vertexów i bufory indeksu , aby przygotowaæ je do rysowania.
 	m_Model->Render(m_D3D->GetDeviceContext());
 
-	// Render the model using the light shader.
+	// Renderuj model u¿ywaj¹c light shader.
 	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
 								   m_Model->GetTextureArray(), m_Light->GetDirection(), m_Light->GetDiffuseColor());
 	if(!result)
@@ -198,7 +191,7 @@ bool GraphicsClass::Render(float rotation)
 		return false;
 	}
 
-	// Present the rendered scene to the screen.
+	// Poka¿ wyrenderowan¹ scenê na ekranie.
 	m_D3D->EndScene();
 
 	return true;

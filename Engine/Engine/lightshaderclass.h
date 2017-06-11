@@ -1,23 +1,13 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: lightshaderclass.h
-////////////////////////////////////////////////////////////////////////////////
 #ifndef _LIGHTSHADERCLASS_H_
 #define _LIGHTSHADERCLASS_H_
 
 
-//////////////
-// INCLUDES //
-//////////////
 #include <d3d11.h>
 #include <d3dx10math.h>
 #include <d3dx11async.h>
 #include <fstream>
 using namespace std;
 
-
-////////////////////////////////////////////////////////////////////////////////
-// Class name: LightShaderClass
-////////////////////////////////////////////////////////////////////////////////
 class LightShaderClass
 {
 private:
@@ -32,7 +22,7 @@ private:
 	{
 		D3DXVECTOR4 diffuseColor;
 		D3DXVECTOR3 lightDirection;
-		float padding;  // Added extra padding so structure is a multiple of 16 for CreateBuffer function requirements.
+		float padding;  // Dodano dodatkowe wype³nienie, wiêc struktura jest wielokrotnoœci¹ 16 dla wymagañ funkcji CreateBuffer.
 	};
 
 public:

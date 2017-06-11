@@ -1,6 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: systemclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "systemclass.h"
 
 
@@ -27,31 +24,31 @@ bool SystemClass::Initialize()
 	bool result;
 
 
-	// Initialize the width and height of the screen to zero before sending the variables into the function.
+	// Initializacja wysokoœci i szerokoœci zanim przeka¿emy zmienne do fuknkcji.
 	screenWidth = 0;
 	screenHeight = 0;
 
-	// Initialize the windows api.
+	// Initializacja windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
+	// Stworzenie obiektu input, który zajmuje siê zczytywanie tego co wyklika u¿ytkownik
 	m_Input = new InputClass;
 	if(!m_Input)
 	{
 		return false;
 	}
 
-	// Initialize the input object.
+	//Initializacja obiektu do inputów 
 	m_Input->Initialize();
 
-	// Create the graphics object.  This object will handle rendering all the graphics for this application.
+	// Stworzenie obiektu grafiki, który zajmuje siê renderowaniem grafiki dla ca³ej aplikacji
 	m_Graphics = new GraphicsClass;
 	if(!m_Graphics)
 	{
 		return false;
 	}
 
-	// Initialize the graphics object.
+	// Initializacaja obiektu grafiki - szerokoœci¹, wysokoœci¹ i obiektem input
 	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
 	if(!result)
 	{
@@ -61,10 +58,10 @@ bool SystemClass::Initialize()
 	return true;
 }
 
-
+// Zwalnianie pamiêci i zakmniêcie okna
 void SystemClass::Shutdown()
 {
-	// Release the graphics object.
+	// Zwolnienie pamiêci po obiekcie grafiki
 	if(m_Graphics)
 	{
 		m_Graphics->Shutdown();
@@ -72,48 +69,48 @@ void SystemClass::Shutdown()
 		m_Graphics = 0;
 	}
 
-	// Release the input object.
+	// Zwolnienie pamiêci po obiekcie inputów
 	if(m_Input)
 	{
 		delete m_Input;
 		m_Input = 0;
 	}
 
-	// Shutdown the window.
+	// Zamkniêcie okna
 	ShutdownWindows();
 	
 	return;
 }
 
-
+// uruchomienie obiektów do stworzenia grafiki
 void SystemClass::Run()
 {
 	MSG msg;
 	bool done, result;
 
 
-	// Initialize the message structure.
+	// Initializacja struktury pamiêcie
 	ZeroMemory(&msg, sizeof(MSG));
 	
-	// Loop until there is a quit message from the window or the user.
+	// Pêtla dopóki nie bêdzie wiadomoœci o przerwaniu
 	done = false;
 	while(!done)
 	{
-		// Handle the windows messages.
+		// Sprawdzanie wiadomoœci od okna
 		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
-		// If windows signals to end the application then exit out.
+		// Je¿eli jest wiadomoœc o zakoñczeniu wtedy pêtla jest przerywana
 		if(msg.message == WM_QUIT)
 		{
 			done = true;
 		}
 		else
 		{
-			// Otherwise do the frame processing.
+			// Kolejna klatka jest tworzona
 			result = Frame();
 			if(!result)
 			{
@@ -132,13 +129,13 @@ bool SystemClass::Frame()
 	bool result;
 
 
-	// Check if the user pressed escape and wants to exit the application.
+	//Sprawdza czy u¿ytkownik wcisn¹³ esc, aby wyjœæ
 	if(m_Input->IsKeyDown(VK_ESCAPE))
 	{
 		return false;
 	}
 
-	// Do the frame processing for the graphics object.
+	// Przetwarzanie ramek dla graficznego obiektu
 	result = m_Graphics->Frame();
 	if(!result)
 	{
@@ -153,23 +150,23 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 {
 	switch(umsg)
 	{
-		// Check if a key has been pressed on the keyboard.
+		// Sprawdzenie czy klawisz zostawi³ wciœniety
 		case WM_KEYDOWN:
 		{
-			// If a key is pressed send it to the input object so it can record that state.
+			// Przes³anie tej informacji do obiektu zajmuj¹cego siê inputami
 			m_Input->KeyDown((unsigned int)wparam);
 			return 0;
 		}
 
-		// Check if a key has been released on the keyboard.
+		// Sprawdzenie czy klawisz zosta³ zwolniony
 		case WM_KEYUP:
 		{
-			// If a key is released then send it to the input object so it can unset the state for that key.
+			// Przeslanie tej informacji do obiektu input
 			m_Input->KeyUp((unsigned int)wparam);
 			return 0;
 		}
 
-		// Any other messages send to the default message handler as our application won't make use of them.
+		// Inne informacje o klaiwszach nic nie wywo³aj¹
 		default:
 		{
 			return DefWindowProc(hwnd, umsg, wparam, lparam);

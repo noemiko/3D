@@ -1,6 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: modelclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "modelclass.h"
 
 
@@ -28,21 +25,21 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* te
 	bool result;
 
 
-	// Load in the model data,
+	// Za³adowanie danych dla modelu
 	result = LoadModel(modelFilename);
 	if(!result)
 	{
 		return false;
 	}
 
-	// Initialize the vertex and index buffers.
+	//Initializacja vertexa and bufora indexów.
 	result = InitializeBuffers(device);
 	if(!result)
 	{
 		return false;
 	}
 
-	// Load the texture for this model.
+	// Za³adowanie tekstur dla tego modelu
 	result = LoadTexture(device, textureFilename1, textureFilename2);
 	if(!result)
 	{
@@ -55,13 +52,13 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* te
 
 void ModelClass::Shutdown()
 {
-	// Release the model texture.
+	// Zwolnienie pamiêci tekstur modelu.
 	ReleaseTexture();
 
-	// Shutdown the vertex and index buffers.
+	// Wy³¹czenie vertex i bufora indeksów.
 	ShutdownBuffers();
 
-	// Release the model data.
+	// Zwolnienie pamiêci modelu.
 	ReleaseModel();
 
 	return;
@@ -70,7 +67,7 @@ void ModelClass::Shutdown()
 
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 {
-	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	// Przygotowania vertexu i bufora indeksów do rysowania.
 	RenderBuffers(deviceContext);
 
 	return;
@@ -82,7 +79,7 @@ int ModelClass::GetIndexCount()
 	return m_indexCount;
 }
 
-
+// jest tablica tekstów poniewa¿ mamy dwie grafiki, które siê przenikaj¹
 ID3D11ShaderResourceView** ModelClass::GetTextureArray()
 {
 	return m_TextureArray->GetTextureArray();
@@ -99,21 +96,21 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	int i;
 
 
-	// Create the vertex array.
+	// Stworzenie tablicy vertex.
 	vertices = new VertexType[m_vertexCount];
 	if(!vertices)
 	{
 		return false;
 	}
 
-	// Create the index array.
+	// Stworzenie tablicy indeksów.
 	indices = new unsigned long[m_indexCount];
 	if(!indices)
 	{
 		return false;
 	}
 
-	// Load the vertex array and index array with data.
+	// Za³aduj tablice vertexa i tablicê indeksów z danymi.
 	for(i=0; i<m_vertexCount; i++)
 	{
 		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
@@ -123,7 +120,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		indices[i] = i;
 	}
 
-	// Set up the description of the static vertex buffer.
+	// Ustawiamy opis dla statycznego vertex buffera.
     vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
     vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -131,19 +128,19 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
     vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
-	// Give the subresource structure a pointer to the vertex data.
+	// Podaj strukturê do wskaŸnika wierzcho³ków.
     vertexData.pSysMem = vertices;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	// Now create the vertex buffer.
+	// Stworzenia bufora vertexów.
     result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Set up the description of the static index buffer.
+	// Ustawiamy opis dla statycznego buffera indeksów.
     indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
     indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -151,19 +148,19 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
     indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	// Give the subresource structure a pointer to the index data.
+	// Podaj strukturê do wskaŸnika dla index data.
     indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	// Create the index buffer.
+	// Stwórz bufor indeksów.
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
+	// Zwolnienie tablicy , gdy bufory wierzcho³kowe i indeksy zosta³y utworzone i za³adowane.
 	delete [] vertices;
 	vertices = 0;
 
@@ -176,14 +173,14 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 void ModelClass::ShutdownBuffers()
 {
-	// Release the index buffer.
+	//Zwolnienie pamiêci bufera indeksów.
 	if(m_indexBuffer)
 	{
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
 	}
 
-	// Release the vertex buffer.
+	// Zwolnienie pamieci bufora verteksów.
 	if(m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
@@ -200,17 +197,17 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	unsigned int offset;
 
 
-	// Set vertex buffer stride and offset.
+	//Ustaw krok naprzód i przesuniêcie bufora.
 	stride = sizeof(VertexType); 
 	offset = 0;
     
-	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	// Ustaw bufor vertexa jako aktywny w assemblerze wejœciowym, aby móg³ byæ renderowany
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
-    // Set the index buffer to active in the input assembler so it can be rendered.
+    // Ustaw bufor indeksu jako aktywny w assemblerze wejœciowym, aby móg³ byæ renderowany
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-    // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+    // Ustaw typ, który powinien byæ renderowany z tego buforu vertexa, w tym przypadku trójk¹ty.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
