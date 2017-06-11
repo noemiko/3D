@@ -69,7 +69,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the light shader object.
+	// Stwórz obiek light shader.
 	m_LightShader = new LightShaderClass;
 	if(!m_LightShader)
 	{
@@ -85,7 +85,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initializuj obiekt light shader.
-	//Stwórz obiekt pierwszego œwiat³a.
+	// Stwórz obiekt pierwszego œwiat³a.
 	m_Light1 = new LightClass;
 	if (!m_Light1)
 	{

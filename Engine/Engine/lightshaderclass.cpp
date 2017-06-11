@@ -414,7 +414,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 	// Pobierz wskaŸnik do danych w sta³ym buforze.
 	dataPtr3 = (LightColorBufferType*)mappedResource.pData;
 
-	// KOpiuj kolor œwiat³a do sta³ego bufora.
+	// Kopiuj kolor œwiat³a do sta³ego bufora.
 	dataPtr3->diffuseColor[0] = diffuseColor[0];
 	dataPtr3->diffuseColor[1] = diffuseColor[1];
 	dataPtr3->diffuseColor[2] = diffuseColor[2];
@@ -441,7 +441,7 @@ void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int inde
 {
 	deviceContext->IASetInputLayout(m_layout);
 
-	// Ustaw vertex and pixel shader który bêdzie renderowaæ trójk¹t.
+	// Ustaw vertex i pixel shader który bêdzie renderowaæ trójk¹t.
 	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 

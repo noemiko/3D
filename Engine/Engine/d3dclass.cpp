@@ -56,7 +56,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 		return false;
 	}
 
-	// U¿yj fabryki fo stworzenia adaptera for the podstawowych grafik graphics interface (video card).
+	// U¿yj fabryki fo stworzenia adaptera for the podstawowych grafik graphics interface (karta graficzna).
 	result = factory->EnumAdapters(0, &adapter);
 	if(FAILED(result))
 	{
@@ -105,7 +105,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 		}
 	}
 
-	// Pobierz opis adaptera (video card).
+	// Pobierz opis adaptera (karta graficzna).
 	result = adapter->GetDesc(&adapterDesc);
 	if(FAILED(result))
 	{
@@ -162,8 +162,6 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Ustaw u¿ycie tylnego bufora.
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-
-	// Set the handle for the window to render to.
     swapChainDesc.OutputWindow = hwnd;
 
 	//Ustaw multisampling na wy³¹czony.
@@ -434,7 +432,7 @@ void D3DClass::EndScene()
 	}
 	else
 	{
-		// Present as fast as possible.
+		// Przedstaw jak najszybciej
 		m_swapChain->Present(0, 0);
 	}
 

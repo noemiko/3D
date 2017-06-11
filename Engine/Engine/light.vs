@@ -1,15 +1,5 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: light.vs
-////////////////////////////////////////////////////////////////////////////////
-
-/////////////
-// DEFINES //
-/////////////
 #define NUM_LIGHTS 4
 
-/////////////
-// GLOBALS //
-/////////////
 cbuffer MatrixBuffer
 {
 	matrix worldMatrix;
@@ -22,9 +12,6 @@ cbuffer LightPositionBuffer
     float4 lightPosition[NUM_LIGHTS];
 };
 
-//////////////
-// TYPEDEFS //
-//////////////
 struct VertexInputType
 {
     float4 position : POSITION;
@@ -63,10 +50,10 @@ PixelInputType LightVertexShader(VertexInputType input)
 	// Obliczyæ normalny wektor tylko wzglêdem macierzy œwiatowej.
     output.normal = mul(input.normal, (float3x3)worldMatrix);
 	
-    // Normalize the normal vector.
+    // Normalizuj normal vector.
     output.normal = normalize(output.normal);
 
-	// Obilicz pozycjê vertexa w œwiecie
+	// Oblicz pozycjê vertexa w œwiecie
     worldPosition = mul(input.position, worldMatrix);
 
 

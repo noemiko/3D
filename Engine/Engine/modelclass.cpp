@@ -219,14 +219,14 @@ bool ModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename1, WCHAR* file
 	bool result;
 
 
-	// Create the texture object.
+	// Stwórz obiekt tekstury
 	m_TextureArray = new TextureArrayClass;
 	if (!m_TextureArray)
 	{
 		return false;
 	}
 
-	// Initialize the texture object.
+	// Inicjalizuj obiekt tekstury.
 	result = m_TextureArray->Initialize(device, filename1, filename2);
 	if (!result)
 	{
@@ -239,7 +239,7 @@ bool ModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename1, WCHAR* file
 
 void ModelClass::ReleaseTexture()
 {
-	// Release the texture object.
+	// Zwolnij pamiêæ
 	if (m_TextureArray)
 	{
 		m_TextureArray->Shutdown();
@@ -258,7 +258,7 @@ bool ModelClass::LoadModel(char* filename)
 	int i;
 
 
-	// Otwórz plik z modele.
+	// Otwórz plik z modelem.
 	fin.open(filename);
 
 	// Je¿eli nie mo¿na otworzyæ pliku.
@@ -267,20 +267,19 @@ bool ModelClass::LoadModel(char* filename)
 		return false;
 	}
 
-	// Pobierz wartoœæ vertexów.
+	// Pobierz iloœæ vertexów.
 	fin.get(input);
 	while (input != ':')
 	{
 		fin.get(input);
 	}
 
-	// Read in the vertex count.
 	fin >> m_vertexCount;
 
-	// Set the number of indices to be the same as the vertex count.
+	// Ustaw liczbê indeksów tak samo, na tak¹ sam¹ jak liczba vertexów.
 	m_indexCount = m_vertexCount;
 
-	// Stwórzy model u¿ywaj¹c liczby z pliku.
+	// Stwórz model u¿ywaj¹c liczby z pliku.
 	m_model = new ModelType[m_vertexCount];
 	if (!m_model)
 	{
